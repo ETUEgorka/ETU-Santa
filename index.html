@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тайный Санта</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        select, button { margin: 10px; padding: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Тайный Санта</h1>
+    <div>
+        <label for="nameSelect">Ваше имя:</label>
+        <select id="nameSelect">
+            <option value="" disabled selected>Выберите ваше имя</option>
+        </select>
+    </div>
+
+    <button onclick="chooseTarget()">Выбрать жертву</button>
+
+    <div>
+        <label for="targetSelect">Ваша цель:</label>
+        <input type="text" id="targetSelect" readonly>
+    </div>
+
+    <button onclick="resetSelection()">Очистить поля и убрать человека</button>
+
+    <script>
+        const participants = ['Анна', 'Борис', 'Виктор', 'Дарья', 'Егор', 'Жанна']; // Замените на свои имена
+        let availableParticipants = [...participants];
+
+        const nameSelect = document.getElementById('nameSelect');
+        const targetSelect = document.getElementById('targetSelect');
+
+        // Заполнение выпадающего списка имен
+        function populateDropdown() {
+            nameSelect.innerHTML = '<option value="" disabled selected>Выберите ваше имя</option>';
+            availableParticipants.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                nameSelect.appendChild(option);
+            });
+        }
+
+        // Функция выбора жертвы
+        function chooseTarget() {
+            const selectedName = nameSelect.value;
+            if (!selectedName) {
+                alert('Пожалуйста, выберите ваше имя.');
+                return;
+            }
+            const possibleTargets = availableParticipants.filter(name => name !== selectedName);
+            if (possibleTargets.length === 0) {
+                alert('Больше нет доступных целей.');
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * possibleTargets.length);
+            targetSelect.value = possibleTargets[randomIndex];
+        }
+
+        // Функция очистки полей и удаления выбранного человека из списка
+        function resetSelection() {
+            const selectedName = nameSelect.value;
+            if (!selectedName) {
+                alert('Сначала выберите имя, чтобы удалить участника.');
+                return;
+            }
+            availableParticipants = availableParticipants.filter(name => name !== selectedName);
+            nameSelect.value = '';
+            targetSelect.value = '';
+            populateDropdown();
+        }
+
+        // Инициализация списка участников при загрузке страницы
+        populateDropdown();
+    </script>
+</body>
+</html>
