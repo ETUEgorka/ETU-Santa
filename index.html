@@ -1,102 +1,139 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тайный Санта</title>
     <style>
         body {
-    font-family: 'Arial', sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow: hidden;
-    position: relative;
-    /* Фон на случай отсутствия изображения */
-}
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
 
-body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('christmas3.png') repeat;
-    background-size: 150px 150px;
-    filter: brightness(80%);
-    z-index: -1;
-}
-
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('christmas3.png') repeat;
+            background-size: 150px 150px;
+            filter: brightness(80%);
+            z-index: -1;
+        }
 
         h1 {
-             
-            color: #f8d348; /* Золотистый цвет */
+            color: #f8d348;
             text-shadow: 2px 2px 5px #1b1b1b;
         }
-        select, button, input {
+
+        select,
+        button,
+        input {
             margin: 10px;
             padding: 12px;
             font-size: 16px;
             border-radius: 8px;
             border: none;
         }
+
         select {
             background-color: #f8d348;
             color: #1b1b1b;
         }
+
         button {
-            background-color: #d9534f; /* Красный */
+            background-color: #d9534f;
             color: white;
             cursor: pointer;
             transition: background-color 0.3s;
+            position: relative;
+            overflow: hidden;
         }
+
         button:hover {
             background-color: #c9302c;
         }
+
         input {
-            background-color: #f8f9fa; /* Светло-серый */
+            background-color: #f8f9fa;
             color: #1b1b1b;
         }
+
         .animation {
             animation: bounce 1s ease infinite;
         }
+
         @keyframes bounce {
-            0%, 100% {
+            0%,
+            100% {
                 transform: translateY(0);
             }
+
             50% {
                 transform: translateY(-10px);
             }
         }
+
+        @keyframes sparkle {
+            0% {
+                opacity: 0.8;
+                transform: scale(0.5) translate(-50%, -50%);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(2) translate(-50%, -50%);
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: gold;
+            border-radius: 50%;
+            animation: sparkle 0.8s forwards;
+            pointer-events: none;
+        }
+
+        main {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
     </style>
 </head>
+
 <body>
-    <h1>Тайный Санта</h1>
-    <div>
-      
-        <select id="nameSelect">
-            <option value="" disabled selected>Выберите ваше имя</option>
-        </select>
-    </div>
-
-    <button onclick="chooseTarget()">Выбрать жертву</button>
-
-    <div>
-      
-        <input type="text" id="targetSelect" readonly>
-    </div>
-
-    <button onclick="resetSelection()">Очистить поля и убрать человека</button>
-
+    <main>
+        <h1>Тайный Санта</h1>
+        <div>
+            <select id="nameSelect">
+                <option value="" disabled selected>Выберите ваше имя</option>
+            </select>
+        </div>
+        <button id="chooseButton" onclick="chooseTarget()">Выбрать жертву</button>
+        <div>
+            <input type="text" id="targetSelect" readonly>
+        </div>
+        <button id="resetButton" onclick="resetSelection()">Очистить поля и убрать человека</button>
+    </main>
     <script>
         const participants = ['Егор', 'Даня', 'Миша', 'Катя', 'Диля', 'Тимофей']; // Имена участников
-        let firstBuffer = [...participants];  // Первый буфер для выбора себя
+        let firstBuffer = [...participants]; // Первый буфер для выбора себя
         let secondBuffer = [...participants]; // Второй буфер для целей
-
         const nameSelect = document.getElementById('nameSelect');
         const targetSelect = document.getElementById('targetSelect');
+        const chooseButton = document.getElementById('chooseButton');
+        const resetButton = document.getElementById('resetButton');
 
         // Заполнение выпадающего списка имен
         function populateDropdown() {
@@ -109,26 +146,36 @@ body::before {
             });
         }
 
-        // Функция выбора цели с анимацией
+        // Добавление анимации блесток
+        function createSparkle(event) {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            sparkle.style.left = `${event.offsetX}px`;
+            sparkle.style.top = `${event.offsetY}px`;
+            event.target.appendChild(sparkle);
+
+            setTimeout(() => sparkle.remove(), 800);
+        }
+
+        // Функция выбора цели
         function chooseTarget() {
             const selectedName = nameSelect.value;
             if (!selectedName) {
                 alert('Пожалуйста, выберите ваше имя.');
                 return;
             }
-
             // Создание списка целей без выбранного участника
             const possibleTargets = secondBuffer.filter(name => name !== selectedName);
             if (possibleTargets.length === 0) {
                 alert('Нет доступных целей для выбора.');
                 return;
             }
-
             // Выбор случайной цели
             const randomIndex = Math.floor(Math.random() * possibleTargets.length);
             const target = possibleTargets[randomIndex];
             targetSelect.value = target;
-
+            // Блокировка кнопки выбора
+            chooseButton.disabled = true;
             // Добавление анимации
             targetSelect.classList.add('animation');
             setTimeout(() => targetSelect.classList.remove('animation'), 1000);
@@ -138,24 +185,28 @@ body::before {
         function resetSelection() {
             const selectedName = nameSelect.value;
             const targetName = targetSelect.value;
-
             if (!selectedName || !targetName) {
                 alert('Сначала выберите имя и цель, чтобы удалить участника.');
                 return;
             }
-
             // Удаление выбранного участника и цели из буферов
             firstBuffer = firstBuffer.filter(name => name !== selectedName);
             secondBuffer = secondBuffer.filter(name => name !== targetName);
-
             // Очистка полей
             nameSelect.value = '';
             targetSelect.value = '';
+            chooseButton.disabled = false;
             populateDropdown();
         }
 
         // Инициализация выпадающего списка
         populateDropdown();
+
+        // Добавление блесток при нажатии кнопок
+        [chooseButton, resetButton].forEach(button => {
+            button.addEventListener('click', createSparkle);
+        });
     </script>
 </body>
+
 </html>
