@@ -9,17 +9,31 @@
     font-family: 'Arial', sans-serif;
     text-align: center;
     margin-top: 50px;
-    background: url('christmas3.png') repeat; /* Путь к вашей текстуре */
-    background-size: 100px 100px; /* Размер одной "плитки" текстуры */
+    background: url('christmas3.png') repeat;
+    background-size: 150px 150px;
     color: #fff;
     height: 100vh;
     overflow: hidden;
-        }
+    position: relative; /* Для правильного позиционирования псевдоэлемента */
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Черный фон с прозрачностью 50% */
+    z-index: -1; /* Помещаем затемнение под контент */
+}
         h1 {
+            position: relative; 
             color: #f8d348; /* Золотистый цвет */
             text-shadow: 2px 2px 5px #1b1b1b;
         }
         select, button, input {
+            position: relative; 
             margin: 10px;
             padding: 12px;
             font-size: 16px;
@@ -75,7 +89,7 @@
     <button onclick="resetSelection()">Очистить поля и убрать человека</button>
 
     <script>
-        const participants = ['Анна', 'Борис', 'Виктор', 'Дарья', 'Егор', 'Жанна']; // Имена участников
+        const participants = ['Егор', 'Даня', 'Миша', 'Катя', 'Диля', 'Тимофей']; // Имена участников
         let firstBuffer = [...participants];  // Первый буфер для выбора себя
         let secondBuffer = [...participants]; // Второй буфер для целей
 
