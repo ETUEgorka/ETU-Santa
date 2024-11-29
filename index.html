@@ -65,30 +65,21 @@
             const randomIndex = Math.floor(Math.random() * possibleTargets.length);
             const target = possibleTargets[randomIndex];
             targetSelect.value = target;
-
-            // Удаление выбранного участника и цели из буферов
-            firstBuffer = firstBuffer.filter(name => name !== selectedName);
-            secondBuffer = secondBuffer.filter(name => name !== target);
-
-            // Обновление выпадающего списка
-            populateDropdown();
         }
 
         // Функция очистки и удаления участника
         function resetSelection() {
             const selectedName = nameSelect.value;
-            if (!selectedName) {
-                alert('Сначала выберите имя, чтобы удалить участника.');
+            const targetName = targetSelect.value;
+
+            if (!selectedName || !targetName) {
+                alert('Сначала выберите имя и цель, чтобы удалить участника.');
                 return;
             }
-            // Возвращаем участника и цель обратно в буферы
-            if (!firstBuffer.includes(selectedName)) {
-                firstBuffer.push(selectedName);
-            }
-            const targetName = targetSelect.value;
-            if (targetName && !secondBuffer.includes(targetName)) {
-                secondBuffer.push(targetName);
-            }
+
+            // Удаление выбранного участника и цели из буферов
+            firstBuffer = firstBuffer.filter(name => name !== selectedName);
+            secondBuffer = secondBuffer.filter(name => name !== targetName);
 
             // Очистка полей
             nameSelect.value = '';
