@@ -157,15 +157,22 @@
             setTimeout(() => sparkle.remove(), 800);
         }
 
-        // Функция выбора цели
+        // Псевдорандомный выбор цели
         function chooseTarget() {
             const selectedName = nameSelect.value;
             if (!selectedName) {
                 alert('Пожалуйста, выберите ваше имя.');
                 return;
             }
-            // Создание списка целей без выбранного участника
-            const possibleTargets = secondBuffer.filter(name => name !== selectedName);
+            // Контроль для последних трех участников
+            let possibleTargets = secondBuffer.filter(name => name !== selectedName);
+            if (possibleTargets.length <= 3) {
+                // Проверяем последние три варианта
+                possibleTargets = possibleTargets.filter(name => {
+                    const lastThreeNames = secondBuffer.slice(-3);
+                    return !(lastThreeNames.includes(selectedName) && lastThreeNames.length === 3);
+                });
+            }
             if (possibleTargets.length === 0) {
                 alert('Нет доступных целей для выбора.');
                 return;
@@ -197,16 +204,3 @@
             targetSelect.value = '';
             chooseButton.disabled = false;
             populateDropdown();
-        }
-
-        // Инициализация выпадающего списка
-        populateDropdown();
-
-        // Добавление блесток при нажатии кнопок
-        [chooseButton, resetButton].forEach(button => {
-            button.addEventListener('click', createSparkle);
-        });
-    </script>
-</body>
-
-</html>
