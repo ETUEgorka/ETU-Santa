@@ -28,8 +28,9 @@
     <button onclick="resetSelection()">Очистить поля и убрать человека</button>
 
     <script>
-        const participants = ['Анна', 'Борис', 'Виктор', 'Дарья', 'Егор', 'Жанна']; // Замените на свои имена
-        let availableParticipants = [...participants];
+        const participants = ['Анна', 'Борис', 'Виктор', 'Дарья', 'Егор', 'Жанна']; // Имена участников
+        let firstBuffer = [...participants];  // Первый буфер для выбора себя
+        let secondBuffer = [...participants]; // Второй буфер для целей
 
         const nameSelect = document.getElementById('nameSelect');
         const targetSelect = document.getElementById('targetSelect');
@@ -37,7 +38,7 @@
         // Заполнение выпадающего списка имен
         function populateDropdown() {
             nameSelect.innerHTML = '<option value="" disabled selected>Выберите ваше имя</option>';
-            availableParticipants.forEach(name => {
+            firstBuffer.forEach(name => {
                 const option = document.createElement('option');
                 option.value = name;
                 option.textContent = name;
@@ -45,36 +46,57 @@
             });
         }
 
-        // Функция выбора жертвы
+        // Функция выбора цели
         function chooseTarget() {
             const selectedName = nameSelect.value;
             if (!selectedName) {
                 alert('Пожалуйста, выберите ваше имя.');
                 return;
             }
-            const possibleTargets = availableParticipants.filter(name => name !== selectedName);
+
+            // Создание списка целей без выбранного участника
+            const possibleTargets = secondBuffer.filter(name => name !== selectedName);
             if (possibleTargets.length === 0) {
-                alert('Больше нет доступных целей.');
+                alert('Нет доступных целей для выбора.');
                 return;
             }
+
+            // Выбор случайной цели
             const randomIndex = Math.floor(Math.random() * possibleTargets.length);
-            targetSelect.value = possibleTargets[randomIndex];
+            const target = possibleTargets[randomIndex];
+            targetSelect.value = target;
+
+            // Удаление выбранного участника и цели из буферов
+            firstBuffer = firstBuffer.filter(name => name !== selectedName);
+            secondBuffer = secondBuffer.filter(name => name !== target);
+
+            // Обновление выпадающего списка
+            populateDropdown();
         }
 
-        // Функция очистки полей и удаления выбранного человека из списка
+        // Функция очистки и удаления участника
         function resetSelection() {
             const selectedName = nameSelect.value;
             if (!selectedName) {
                 alert('Сначала выберите имя, чтобы удалить участника.');
                 return;
             }
-            availableParticipants = availableParticipants.filter(name => name !== selectedName);
+            // Возвращаем участника и цель обратно в буферы
+            if (!firstBuffer.includes(selectedName)) {
+                firstBuffer.push(selectedName);
+            }
+            const targetName = targetSelect.value;
+            if (targetName && !secondBuffer.includes(targetName)) {
+                secondBuffer.push(targetName);
+            }
+
+            // Очистка полей
             nameSelect.value = '';
             targetSelect.value = '';
             populateDropdown();
         }
 
-        // Инициализация списка участников при загрузке страницы
+        // Инициализация выпадающего списка
         populateDropdown();
     </script>
 </body>
