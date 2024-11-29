@@ -5,8 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тайный Санта</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        select, button { margin: 10px; padding: 10px; font-size: 16px; }
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background: url('background.jpg') no-repeat center center/cover; /* Путь к фону */
+            color: #fff;  /* Белый текст */
+            background-color: #1b1b1b; /* Фоновый цвет на случай отсутствия изображения */
+            height: 100vh;
+            overflow: hidden;
+        }
+        h1 {
+            color: #f8d348; /* Золотистый цвет */
+            text-shadow: 2px 2px 5px #1b1b1b;
+        }
+        select, button, input {
+            margin: 10px;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+        }
+        select {
+            background-color: #f8d348;
+            color: #1b1b1b;
+        }
+        button {
+            background-color: #d9534f; /* Красный */
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #c9302c;
+        }
+        input {
+            background-color: #f8f9fa; /* Светло-серый */
+            color: #1b1b1b;
+        }
+        .animation {
+            animation: bounce 1s ease infinite;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -46,7 +93,7 @@
             });
         }
 
-        // Функция выбора цели
+        // Функция выбора цели с анимацией
         function chooseTarget() {
             const selectedName = nameSelect.value;
             if (!selectedName) {
@@ -65,6 +112,10 @@
             const randomIndex = Math.floor(Math.random() * possibleTargets.length);
             const target = possibleTargets[randomIndex];
             targetSelect.value = target;
+
+            // Добавление анимации
+            targetSelect.classList.add('animation');
+            setTimeout(() => targetSelect.classList.remove('animation'), 1000);
         }
 
         // Функция очистки и удаления участника
