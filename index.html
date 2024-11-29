@@ -67,43 +67,6 @@
             color: #1b1b1b;
         }
 
-        .animation {
-            animation: bounce 1s ease infinite;
-        }
-
-        @keyframes bounce {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        @keyframes sparkle {
-            0% {
-                opacity: 0.8;
-                transform: scale(0.5) translate(-50%, -50%);
-            }
-
-            100% {
-                opacity: 0;
-                transform: scale(2) translate(-50%, -50%);
-            }
-        }
-
-        .sparkle {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: gold;
-            border-radius: 50%;
-            animation: sparkle 0.8s forwards;
-            pointer-events: none;
-        }
-
         main {
             position: relative;
             top: 50%;
@@ -137,6 +100,11 @@
 
         // Заполнение выпадающего списка имен
         function populateDropdown() {
+            if (!nameSelect) {
+                console.error('Не найден элемент select с id nameSelect.');
+                return;
+            }
+
             nameSelect.innerHTML = '<option value="" disabled selected>Выберите ваше имя</option>';
             firstBuffer.forEach(name => {
                 const option = document.createElement('option');
@@ -144,35 +112,19 @@
                 option.textContent = name;
                 nameSelect.appendChild(option);
             });
+
+            console.log('Выпадающий список успешно заполнен:', firstBuffer);
         }
 
-        // Добавление анимации блесток
-        function createSparkle(event) {
-            const sparkle = document.createElement('div');
-            sparkle.classList.add('sparkle');
-            sparkle.style.left = `${event.offsetX}px`;
-            sparkle.style.top = `${event.offsetY}px`;
-            event.target.appendChild(sparkle);
-
-            setTimeout(() => sparkle.remove(), 800);
-        }
-
-        // Псевдорандомный выбор цели
+        // Функция выбора цели
         function chooseTarget() {
             const selectedName = nameSelect.value;
             if (!selectedName) {
                 alert('Пожалуйста, выберите ваше имя.');
                 return;
             }
-            // Контроль для последних трех участников
-            let possibleTargets = secondBuffer.filter(name => name !== selectedName);
-            if (possibleTargets.length <= 3) {
-                // Проверяем последние три варианта
-                possibleTargets = possibleTargets.filter(name => {
-                    const lastThreeNames = secondBuffer.slice(-3);
-                    return !(lastThreeNames.includes(selectedName) && lastThreeNames.length === 3);
-                });
-            }
+            // Создание списка целей без выбранного участника
+            const possibleTargets = secondBuffer.filter(name => name !== selectedName);
             if (possibleTargets.length === 0) {
                 alert('Нет доступных целей для выбора.');
                 return;
@@ -181,11 +133,7 @@
             const randomIndex = Math.floor(Math.random() * possibleTargets.length);
             const target = possibleTargets[randomIndex];
             targetSelect.value = target;
-            // Блокировка кнопки выбора
-            chooseButton.disabled = true;
-            // Добавление анимации
-            targetSelect.classList.add('animation');
-            setTimeout(() => targetSelect.classList.remove('animation'), 1000);
+            chooseButton.disabled = true; // Блокировка кнопки выбора
         }
 
         // Функция очистки и удаления участника
@@ -203,4 +151,12 @@
             nameSelect.value = '';
             targetSelect.value = '';
             chooseButton.disabled = false;
-            populateDropdown();
+            populateDropdown(); // Перезаполнение выпадающего списка
+        }
+
+        // Инициализация выпадающего списка
+        populateDropdown();
+    </script>
+</body>
+
+</html>
